@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>استبيان صحي - رفاهية الصحة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* 🔹 الشكل العام */
+body {
+font-family: "Cairo", sans-serif;
+background: linear-gradient(135deg, rgba(116, 235, 213, 0.8), rgba(172, 182, 229, 0.8)), 
+            url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?auto=format&fit=crop&w=2070&q=80') center/cover no-repeat fixed;
+margin: 0;
+padding: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+animation: backgroundShift 10s ease-in-out infinite alternate;
+color: #2c3e50;
+overflow-x: hidden;
+position: relative;
+}
+@keyframes backgroundShift {
+0% { background-position: center top; }
+100% { background-position: center bottom; }
+}
+
+/* 🔹 قلوب الخلفية */
+.background-hearts {
+position: fixed;
+top: 0; left: 0;
+width: 100%; height: 100%;
+pointer-events: none;
+z-index: -1;
+overflow: hidden;
+}
+.heart {
+position: absolute;
+font-size: 20px;
+color: rgba(231, 76, 60, 0.6);
+animation: float 6s linear infinite, heartbeat 2s ease-in-out infinite;
+opacity: 0.7;
+}
+@keyframes float {
+0% {
+transform: translateY(100vh) scale(0);
+opacity: 0;
+}
+50% {
+opacity: 1;
+transform: translateY(50vh) scale(1);
+}
+100% {
+transform: translateY(-10vh) scale(1.2);
+opacity: 0;
+}
+}
+@keyframes heartbeat {
+0%,100% { transform: scale(1); }
+50% { transform: scale(1.2); }
+}
+@keyframes rotate {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+/* 🔹 الحاوية */
+.container {
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+width: 95%;
+max-width: 850px;
+padding: 30px 40px;
+border-radius: 20px;
+box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+max-height: 95vh;
+overflow-y: auto;
+position: relative;
+z-index: 1;
+animation: fadeIn 1s ease-out;
+}
+@keyframes fadeIn {
+0% { opacity: 0; transform: translateY(20px); }
+100% { opacity: 1; transform: translateY(0); }
+}
+h2 {
+text-align: center;
+margin-bottom: 20px;
+color: #2c5530;
+font-size: 28px;
+font-weight: 700;
+animation: slideIn 0.8s ease-out;
+}
+@keyframes slideIn {
+0% { opacity: 0; transform: translateX(50px); }
+100% { opacity: 1; transform: translateX(0); }
+}
+h2 i {
+color: #e74c3c;
+margin-left: 10px;
+animation: heartbeat 1.5s ease-in-out infinite both;
+}
+
+/* 🔹 الفورم */
+label {
+font-weight: bold;
+display: block;
+margin: 20px 0 10px;
+color: #34495e;
+font-size: 16px;
+transition: color 0.3s ease;
+}
+label:hover {
+color: #4CAF50;
+}
+input, select, textarea {
+width: 100%;
+padding: 12px;
+border-radius: 10px;
+border: 2px solid #ddd;
+margin-bottom: 10px;
+font-family: inherit;
+font-size: 16px;
+transition: all 0.3s ease;
+box-sizing: border-box;
+}
+input:focus, select:focus, textarea:focus {
+border-color: #4CAF50;
+outline: none;
+box-shadow: 0 0 5px rgba(76,175,80,0.3);
+transform: scale(1.02);
+}
+
+/* 🔹 اختيارات الراديو */
+.options {
+margin-bottom: 15px;
+}
+.options label {
+display: flex;
+align-items: center; 
+gap: 10px;           
+background: #f9f9f9;
+padding: 12px;
+border-radius: 10px;
+margin: 8px 0;
+cursor: pointer;
+border: 1px solid #ddd;
+transition: all 0.3s ease;
+}
+.options label:hover {
+background: #e8f5e8;
+border-color: #4CAF50;
+transform: translateX(-5px) scale(1.02);
+}
+.options label input[type="radio"]:checked ~ span,
+.options label input[type="checkbox"]:checked ~ span {
+color: #4CAF50;
+font-weight: bold;
+animation: pulse 0.6s ease-out;
+}
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(1.1); }
+100% { transform: scale(1); }
+}
+.options input[type="radio"],
+.options input[type="checkbox"] {
+margin: 0;
+transform: scale(1.5);
+accent-color: #4CAF50; 
+width: auto;
+transition: transform 0.2s ease;
+}
+.options input[type="radio"]:checked,
+.options input[type="checkbox"]:checked {
+transform: scale(1.7);
+}
+
+/* إخفاء/إظهار الحقول الشرطية */
+.sport-details {
+display: none;
+margin-top: 10px;
+transition: all 0.3s ease;
+opacity: 0;
+transform: translateY(10px);
+}
+.sport-details.show {
+display: block;
+opacity: 1;
+transform: translateY(0);
+}
+
+/* 🔹 زر الإرسال */
+button {
+width: 100%;
+padding: 15px;
+background: linear-gradient(135deg, #4CAF50, #45a049);
+color: #fff;
+font-size: 18px;
+font-weight: 600;
+border: none;
+border-radius: 12px;
+cursor: pointer;
+margin-top: 20px;
+transition: all 0.3s ease;
+box-shadow: 0 4px 10px rgba(76,175,80,0.3);
+position: relative;
+overflow: hidden;
+}
+button::before {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+width: 0;
+height: 0;
+background: rgba(255,255,255,0.2);
+border-radius: 50%;
+transform: translate(-50%, -50%);
+transition: width 0.6s, height 0.6s;
+}
+button:hover::before {
+width: 300px;
+height: 300px;
+}
+button:hover {
+background: linear-gradient(135deg, #45a049, #66bb6a);
+transform: translateY(-2px);
+box-shadow: 0 6px 15px rgba(76,175,80,0.4);
+}
+</style>
+</head>
+<body>
+<!-- الخلفية المتحركة -->
+<div class="background-hearts" id="backgroundHearts"></div>
+
+<div class="container">
+<h2><i class="fas fa-heartbeat"></i> استبيان صحتك تهمنا 🩺</h2>
+<form id="surveyForm">
+
+    <!-- بيانات أساسية -->
+    <label><i class="fas fa-calendar-alt"></i> العمر:</label>
+    <input type="number" name="age" required min="1" max="120">
+
+    <label><i class="fas fa-venus-mars"></i> النوع:</label>
+    <select name="sex" required>
+    <option value="">اختر</option>
+    <option value="ذكر">ذكر</option>
+    <option value="أنثى">أنثى</option>
+    </select>
+
+    <label><i class="fas fa-weight"></i> الوزن (كجم):</label>
+    <input type="number" name="weight" required min="1" step="0.1">
+
+    <label><i class="fas fa-ruler-vertical"></i> الطول (سم):</label>
+    <input type="number" name="height" required min="1" max="250">
+
+    <label><i class="fas fa-briefcase"></i> الوظيفة:</label>
+    <input type="text" name="job" required>
+
+    <!-- سؤال 1 -->
+    <label>🚶‍♂️ المشي حياة: بتعرف بتمشي كام خطوة في اليوم تقريبًا؟</label>
+    <div class="options">
+    <label><input type="radio" name="steps" value="ماعرفش"> ماكنتش اعرف انها مهمة</label>
+    <label><input type="radio" name="steps" value="1000-5000"> 1,000 - 5,000</label>
+    <label><input type="radio" name="steps" value="5000-10000"> 5,000 - 10,000</label>
+    <label><input type="radio" name="steps" value="10000+"> 10,000+</label>
+    </div>
+
+    <!-- سؤال 2 -->
+    <label>💧 شرب المياه: بتشرب قد إيه مياه في اليوم تقريبًا؟</label>
+    <div class="options">
+    <label><input type="radio" name="water" value="مش بتابع"> مش بتابع</label>
+    <label><input type="radio" name="water" value="0.5-1"> 0.5 - 1 لتر</label>
+    <label><input type="radio" name="water" value="1-2"> 1 - 2 لتر</label>
+    <label><input type="radio" name="water" value="2-3"> 2 - 3 لتر</label>
+    <label><input type="radio" name="water" value="3+"> 3 لتر أو أكثر</label>
+    </div>
+
+    <!-- سؤال 3 -->
+    <label>🚭 التدخين: في رأيك أي نوع أقل ضررًا؟</label>
+    <div class="options">
+    <label><input type="radio" name="smoking" value="سجاير"> سجاير</label>
+    <label><input type="radio" name="smoking" value="شيشة"> شيشة</label>
+    <label><input type="radio" name="smoking" value="vape"> Vape</label>
+    <label><input type="radio" name="smoking" value="iqos"> IQOS</label>
+    </div>
+
+    <!-- سؤال 4 -->
+    <label>🧂 استهلاك الملح: كام معلقة ملح في اليوم؟</label>
+    <div class="options">
+    <label><input type="radio" name="salt" value="0-0.5"> 0 - 0.5 معلقة</label>
+    <label><input type="radio" name="salt" value="1-3"> 1 - 3</label>
+    <label><input type="radio" name="salt" value="4-7"> 4 - 7</label>
+    <label><input type="radio" name="salt" value="7+"> 7+</label>
+    </div>
+
+    <!-- سؤال 5 -->
+    <label>🏃‍♀️ الرياضة: هل هي جزء من حياتك؟</label>
+    <div class="options">
+    <label><input type="radio" name="sport" value="نعم"> نعم</label>
+    <label><input type="radio" name="sport" value="لا"> لا</label>
+    </div>
+    <div class="sport-details" id="sportDetails">
+    <input type="text" name="sport_details" placeholder="اذكر نوع التمرين إن وجد">
+    </div>
+
+    <!-- سؤال 6 -->
+    <label>☕ السكر في الشاي/القهوة: بتحط كام معلقة؟</label>
+    <div class="options">
+    <label><input type="radio" name="sugar" value="0-0.5"> 0 - 0.5</label>
+    <label><input type="radio" name="sugar" value="1-2"> 1 - 2</label>
+    <label><input type="radio" name="sugar" value="2-4"> 2 - 4</label>
+    <label><input type="radio" name="sugar" value="4+"> 4+</label>
+    </div>
+
+    <!-- سؤال 7 -->
+    <label>⚡ الكافيين: بتشرب كام مرة في اليوم؟</label>
+    <div class="options">
+    <label><input type="radio" name="caffeine" value="0"> 0</label>
+    <label><input type="radio" name="caffeine" value="1"> 1</label>
+    <label><input type="radio" name="caffeine" value="2"> 2</label>
+    <label><input type="radio" name="caffeine" value="3"> 3</label>
+    <label><input type="radio" name="caffeine" value="4"> 4</label>
+    <label><input type="radio" name="caffeine" value="5+"> 5+</label>
+    </div>
+
+    <!-- سؤال 8 -->
+    <label>😴 النوم</label>
+    <input type="number" name="sleep_hours" placeholder="عدد ساعات النوم">
+    <input type="text" name="sleep_time" placeholder="عادة بتنام الساعة كام؟">
+
+    <!-- سؤال 9 -->
+    <label>🦷 صحة الفم والأسنان: هل تهتم وتزور الطبيب دوريًا؟</label>
+    <div class="options">
+    <label><input type="radio" name="teeth" value="نعم"> نعم</label>
+    <label><input type="radio" name="teeth" value="لا"> لا</label>
+    </div>
+</form>
+</div>
+
+<script>
+// ألوان مختلفة للقلوب
+const heartColors = ["❤️", "💖", "💜", "💙", "💚", "💛"];
+
+function createHeart() {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = heartColors[Math.floor(Math.random() * heartColors.length)];
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.fontSize = Math.random() * 20 + 15 + "px";
+  heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+  document.getElementById("backgroundHearts").appendChild(heart);
+
+  setTimeout(() => { heart.remove(); }, 8000);
+}
+setInterval(createHeart, 800);
+
+// إظهار تفاصيل الرياضة
+document.querySelectorAll("input[name='sport']").forEach(input => {
+  input.addEventListener("change", function() {
+    const details = document.getElementById("sportDetails");
+    if (this.value === "نعم") {
+      details.classList.add("show");
+    } else {
+      details.classList.remove("show");
+    }
+  });
+});
+</script>
+</body>
+</html>
